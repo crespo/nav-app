@@ -1,3 +1,4 @@
+import IconButton from '@/components/IconButton';
 import List from '@/components/MealDetail/List';
 import Subtitle from '@/components/MealDetail/Substitle';
 import MealDetails from '@/components/MealDetails';
@@ -10,7 +11,17 @@ export default function MealDetailScreen({ route, navigation }: any) {
 
     useLayoutEffect(() => {
         const mealTitle = MEALS.find((meal: any) => meal.id === mealId)?.title;
-        navigation.setOptions({ title: mealTitle });
+
+        function headerButtonPressHandler() {
+            console.log('Pressed!');
+        }
+
+        navigation.setOptions({
+            title: mealTitle,
+            headerRight: () => {
+                return <IconButton icon="star" color="white" onPress={headerButtonPressHandler} />;
+            },
+        });
     }, [mealId, navigation]);
 
     const selectedMeal = MEALS.filter((meal) => {
