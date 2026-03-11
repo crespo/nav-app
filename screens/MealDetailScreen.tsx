@@ -3,19 +3,26 @@ import List from '@/components/MealDetail/List';
 import Subtitle from '@/components/MealDetail/Substitle';
 import MealDetails from '@/components/MealDetails';
 import { MEALS } from '@/data/dummy-data';
+import { useFavorites } from '@/store/context/favorites-context';
 import { useLayoutEffect } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function MealDetailScreen({ route, navigation }: any) {
+    const favoritesContext = useFavorites();
+    
     const mealId = route.params.mealId;
+
+    const selectedMeal = MEALS.filter((meal) => {
+        return meal.id === mealId;
+    })[0];
+
+    function headerButtonPressHandler() {
+        console.log('Pressed!');
+    }
 
     useLayoutEffect(() => {
         const mealTitle = MEALS.find((meal: any) => meal.id === mealId)?.title;
-
-        function headerButtonPressHandler() {
-            console.log('Pressed!');
-        }
-
+        
         navigation.setOptions({
             title: mealTitle,
             headerRight: () => {
@@ -24,9 +31,6 @@ export default function MealDetailScreen({ route, navigation }: any) {
         });
     }, [mealId, navigation]);
 
-    const selectedMeal = MEALS.filter((meal) => {
-        return meal.id === mealId;
-    })[0];
 
     return (
         <ScrollView style={styles.rootContainer}>
