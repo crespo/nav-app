@@ -9,28 +9,40 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function MealDetailScreen({ route, navigation }: any) {
     const favoritesContext = useFavorites();
-    
-    const mealId = route.params.mealId;
+
+    const mealId: string = route.params.mealId;
 
     const selectedMeal = MEALS.filter((meal) => {
         return meal.id === mealId;
     })[0];
 
-    function headerButtonPressHandler() {
-        console.log('Pressed!');
-    }
+    const mealIsFavorite = favoritesContext.ids.includes(mealId);
 
+    
     useLayoutEffect(() => {
         const mealTitle = MEALS.find((meal: any) => meal.id === mealId)?.title;
         
+        function changeFavoriteStatusHandler() {
+            if (mealIsFavorite) {
+                favoritesContext.removeFavorite(mealId);
+            } else {
+                favoritesContext.addFavorite(mealId);
+            }
+        }
+
         navigation.setOptions({
             title: mealTitle,
             headerRight: () => {
-                return <IconButton icon="star" color="white" onPress={headerButtonPressHandler} />;
+                return (
+                    <IconButton
+                        icon={mealIsFavorite ? 'star' : 'star-outline'}
+                        color="white"
+                        onPress={changeFavoriteStatusHandler}
+                    />
+                );
             },
         });
-    }, [mealId, navigation]);
-
+    }, [mealId, navigation, mealIsFavorite, favoritesContext]);
 
     return (
         <ScrollView style={styles.rootContainer}>
