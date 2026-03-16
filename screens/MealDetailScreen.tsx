@@ -3,12 +3,17 @@ import List from '@/components/MealDetail/List';
 import Subtitle from '@/components/MealDetail/Substitle';
 import MealDetails from '@/components/MealDetails';
 import { MEALS } from '@/data/dummy-data';
-import { useFavorites } from '@/store/context/favorites-context';
+// import { useFavorites } from '@/store/context/favorites-context';
+import { addFavorite, removeFavorite } from '@/store/redux/favorites';
 import { useLayoutEffect } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function MealDetailScreen({ route, navigation }: any) {
-    const favoritesContext = useFavorites();
+    // const favoritesContext = useFavorites();
+    const favoriteMealsId = useSelector((state: any) => state.favoriteMeals.ids);
+
+    const dispatch = useDispatch();
 
     const mealId: string = route.params.mealId;
 
@@ -16,17 +21,16 @@ export default function MealDetailScreen({ route, navigation }: any) {
         return meal.id === mealId;
     })[0];
 
-    const mealIsFavorite = favoritesContext.ids.includes(mealId);
+    const mealIsFavorite = favoriteMealsId.includes(mealId);
 
-    
     useLayoutEffect(() => {
         const mealTitle = MEALS.find((meal: any) => meal.id === mealId)?.title;
-        
+
         function changeFavoriteStatusHandler() {
             if (mealIsFavorite) {
-                favoritesContext.removeFavorite(mealId);
+                dispatch(removeFavorite({ id: mealId }));
             } else {
-                favoritesContext.addFavorite(mealId);
+                dispatch(addFavorite({ id: mealId }));
             }
         }
 
@@ -42,7 +46,7 @@ export default function MealDetailScreen({ route, navigation }: any) {
                 );
             },
         });
-    }, [mealId, navigation, mealIsFavorite, favoritesContext]);
+    }, [mealId, navigation, mealIsFavorite, dispatch, favoriteMealsId]);
 
     return (
         <ScrollView style={styles.rootContainer}>
